@@ -20,6 +20,10 @@ module.exports = (robot) ->
     fiat = (msg.match[2] || 'usd').trim().toLowerCase()
     coinPrice(msg, crypto, fiat)
 
+symbols =
+  usd: '$'
+  eur: '€'
+
 coinPrice = (msg, crypto, fiat) ->
   msg
     .send "Fetching..."
@@ -27,5 +31,9 @@ coinPrice = (msg, crypto, fiat) ->
     .http("https://btc-e.com/api/2/#{crypto}_#{fiat}/ticker")
     .get() (err, res, body) ->
       tick = JSON.parse(body)['ticker']
-      msg.send "#{crypto.toUpperCase()}: #{tick['last']} (H: #{tick['high']} | L: #{tick['low']})"
+      if err or not tick
+        return msg.send "Sorry btc-e doesn't like that combination"
+
+      symbol = symbols[fiat]
+      msg.send "#{crypto.toUpperCase()}: #{symbol}#{tick['last']} (H: #{symbol}#{tick['high']} | L: #{symbol}#{tick['low']})"
 
