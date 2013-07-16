@@ -2,7 +2,7 @@
 # Give me a hanney
 #
 # Dependencies:
-# None
+# set HANNEY_URL
 #
 # Configuration:
 # None
@@ -15,6 +15,8 @@
 
 cheerio = require 'cheerio'
 
+hanney_url = process.env.HANNEY_URL
+
 module.exports = (robot) ->
   robot.respond /hanney me/i, (msg) ->
     hanneyMe msg
@@ -26,12 +28,12 @@ hanneyMe = (msg) ->
     .send "Fetching you a special Hanney..."
 
   msg
-    .http("http://doir.ir/mha/")
+    .http(hanney_url)
     .get() (err, res, body) ->
       $ = cheerio.load(body)
       $('a').each (index, value) ->
         link = $(this).text()
         hanneys.push link if /.*\.jpg/.test(link)
 
-      msg.reply "A special hanney for u http://doir.ir/mha/#{msg.random hanneys}"
+      msg.reply "A special hanney for u #{hanney_url}#{msg.random hanneys}"
 
