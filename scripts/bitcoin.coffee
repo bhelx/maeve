@@ -1,55 +1,31 @@
 # Description:
-# Find the latest Bitcoin price in specified currency
+# Find the latest cryptocurrency prices
 #
 # Dependencies:
-# "cheerio": ""
+# None
 #
 # Configuration:
 # None
 #
 # Commands:
-# hubot bitcoin price (in) <currency>
-# hubot btc
+# hubot btc [usd] - bitcoin command, fiat currency optional, defaults to usd
+# hubot ltc [usd] - litecoin command, fiat currency optional, defaults to usd
 #
 # Author:
-# Fred Wu
 # bhelx
 
-cheerio = require('cheerio')
-
 module.exports = (robot) ->
-  robot.respond /bitcoin price\s(in\s)?(.*)/i, (msg) ->
-    currency = msg.match[2].trim().toUpperCase()
-    bitcoinPrice(msg, currency)
-  robot.respond /btc/i, (msg) ->
-    currency = 'USD'
-    bitcoinPrice(msg, currency)
+  robot.respond /(btc|ltc) ?(.*)/i, (msg) ->
+    crypto = msg.match[1]
+    fiat = (msg.match[2] || 'usd').trim().toLowerCase()
+    coinPrice(msg, crypto, fiat)
 
-bitcoinPrice = (msg, currency) ->
+coinPrice = (msg, crypto, fiat) ->
   msg
-    .send "Looking up... sit tight..."
+    .send "Fetching..."
   msg
-    .http("http://bitcoinprices.com/")
+    .http("https://btc-e.com/api/2/#{crypto}_#{fiat}/ticker")
     .get() (err, res, body) ->
-      msg.send "#{getPrice(currency, body)}"
+      tick = JSON.parse(body)['ticker']
+      msg.send "#{crypto.toUpperCase()}: #{tick['last']} (H: #{tick['high']} | L: #{tick['low']})"
 
-getPrice = (currency, body) ->
-  $ = cheerio.load(body)
-
-  lastPrice = null
-  highPrice = null
-  lowPrice = null
-  priceSymbol = null
-
-  $('table.currencies td.symbol').each (i) ->
-    if $(this).text() == currency
-      priceSymbol = $(this).next().next().next().next().next().next().text()
-      lastPrice = "#{priceSymbol}#{$(this).next().next().next().next().next().text()}"
-      highPrice = "#{priceSymbol}#{$(this).next().next().next().text()}"
-      lowPrice = "#{priceSymbol}#{$(this).next().next().next().next().text()}"
-      false
-
-  if lastPrice == null
-    "Can't find the price for #{currency}. :("
-  else
-    "#{currency}: #{lastPrice} (H: #{highPrice} | L: #{lowPrice})"
