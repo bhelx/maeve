@@ -21,5 +21,5 @@ module.exports = (robot) ->
     if items.length < 2
       msg.reply "I need at least 2 choices ^_^"
     else
-      msg.reply "I choose #{msg.random items}"
+      msg.reply "I choose #{msg.random(items).trim()}"
 
