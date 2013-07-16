@@ -10,21 +10,25 @@
 # Commands:
 # hubot btc [usd] - bitcoin command, fiat currency optional, defaults to usd
 # hubot ltc [usd] - litecoin command, fiat currency optional, defaults to usd
+# hubot coins [crypto] [usd] - generic command, must supply first arg, second defaults to usd but could also be another crypto
 #
 # Author:
 # bhelx
 
 module.exports = (robot) ->
   robot.respond /(btc|ltc) ?(.*)/i, (msg) ->
-    crypto = msg.match[1]
-    fiat = (msg.match[2] || 'usd').trim().toLowerCase()
-    coinPrice(msg, crypto, fiat)
+    coinPrice msg
+  robot.respond /coins ?([a-zA-Z]*) ?([a-zA-Z]*)/i, (msg) ->
+    coinPrice msg
 
 symbols =
   usd: '$'
   eur: '€'
 
 coinPrice = (msg, crypto, fiat) ->
+  crypto = msg.match[1]
+  fiat = (msg.match[2] || 'usd').trim().toLowerCase()
+
   msg
     .send "Fetching..."
   msg
@@ -34,6 +38,6 @@ coinPrice = (msg, crypto, fiat) ->
       if err or not tick
         return msg.send "Sorry btc-e doesn't like that combination"
 
-      symbol = symbols[fiat]
+      symbol = symbols[fiat] || ''
       msg.send "#{crypto.toUpperCase()}: #{symbol}#{tick['last']} (H: #{symbol}#{tick['high']} | L: #{symbol}#{tick['low']})"
 
