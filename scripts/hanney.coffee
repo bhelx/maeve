@@ -18,8 +18,11 @@ cheerio = require 'cheerio'
 module.exports = (robot) ->
   robot.respond /hanney me/i, (msg) ->
     hanneyMe msg
+  robot.respond /hanney to ([a-zA-Z]*)/i, (msg) ->
+    user = msg.match[1]
+    hanneyMe msg, user
 
-hanneyMe = (msg) ->
+hanneyMe = (msg, user) ->
   hanneys = []
 
   msg
@@ -33,4 +36,10 @@ hanneyMe = (msg) ->
         link = $(this).text()
         hanneys.push link if /.*\.jpg/.test(link)
 
-      msg.send "http://doir.ir/mha/#{msg.random hanneys}"
+      hanney = "http://doir.ir/mha/#{msg.random hanneys}"
+
+      if user
+        msg.reply "Hi #{user}! A special hanney for u #{hanney}"
+      else
+        msg.send hanney
+
