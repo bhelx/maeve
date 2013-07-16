@@ -33,5 +33,5 @@ hanneyMe = (msg) ->
         link = $(this).text()
         hanneys.push link if /.*\.jpg/.test(link)
 
-      msg.send "http://doir.ir/mha/#{msg.random hanneys}"
+      msg.reply "A special hanney for u http://doir.ir/mha/#{msg.random hanneys}"
 
