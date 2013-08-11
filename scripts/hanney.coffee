@@ -3,6 +3,7 @@
 #
 # Dependencies:
 # set HANNEY_URL
+# cheerio
 #
 # Configuration:
 # None
