@@ -32,12 +32,12 @@ coinPrice = (msg, crypto, fiat) ->
   msg
     .send "Fetching..."
   msg
-    .http("https://btc-e.com/api/2/#{crypto}_#{fiat}/ticker")
+    .http("http://data.mtgox.com/api/1/#{crypto}#{fiat}/ticker")
     .get() (err, res, body) ->
-      tick = JSON.parse(body).ticker
-      if err or not tick
+      tick = JSON.parse(body)
+      if err or tick.result != 'success'
         return msg.send "Sorry btc-e doesn't like that combination"
 
       symbol = symbols[fiat] || ''
-      msg.send "#{crypto.toUpperCase()}: #{symbol}#{tick.last} (H: #{symbol}#{tick.high} | L: #{symbol}#{tick.low})"
+      msg.send "#{crypto.toUpperCase()}: #{symbol}#{tick.return.last.display} (H: #{symbol}#{tick.return.high.display} | L: #{symbol}#{tick.return.low.display})"
 
