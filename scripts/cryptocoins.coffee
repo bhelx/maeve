@@ -38,6 +38,6 @@ coinPrice = (msg, crypto, fiat) ->
       if err or tick.result != 'success'
         return msg.send "Sorry btc-e doesn't like that combination"
 
-      symbol = symbols[fiat] || ''
-      msg.send "#{crypto.toUpperCase()}: #{symbol}#{tick.return.last.display} (H: #{symbol}#{tick.return.high.display} | L: #{symbol}#{tick.return.low.display})"
+      #symbol = symbols[fiat] || ''
+      msg.send "#{crypto.toUpperCase()}: #{tick.return.last.display} (H: #{tick.return.high.display} | L: #{tick.return.low.display})"
 
