@@ -48,4 +48,3 @@ module.exports = (robot) ->
     clearInterval interval
     msg.send "Stopped pledge watcher"
 
-
